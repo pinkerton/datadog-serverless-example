@@ -1,16 +1,20 @@
-service: serverless-rest-api-with-dynamodb
+service: datadog-serverless-rest-api
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
-  - serverless-python-requirements
+  - serverless-dotenv-plugin
   - serverless-offline
+  - serverless-python-requirements
 
 provider:
   name: aws
-  runtime: python2.7
+  runtime: python3.7
+  region: us-east-1
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  custom:
+    DATADOG_LAMBDA_LAYER: arn:aws:lambda:${self:provider.region, 'us-east-1'}:464622532012:layer:Datadog-Python37-metric:1
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -30,6 +34,8 @@ functions:
           path: todos
           method: post
           cors: true
+    layers:
+      - ${self:provider.custom.DATADOG_LAMBDA_LAYER}
 
   list:
     handler: todos/list.list
@@ -81,3 +87,10 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+
+custom:
+  # Disable compiling non-pure Python modules since it requires Docker
+  # https://github.com/UnitedIncome/serverless-python-requirements#cross-compiling
+  pythonRequirements:
+    dockerizePip: false
