@@ -19,7 +19,14 @@ The idea behind the `todos` directory is that in case you want to create a servi
 
 ```bash
 npm install -g serverless
+npm install
+cp .env.example .env
+# edit .env with your Datadog API keys found at https://app.datadoghq.com/account/settings#api
 ```
+
+You can also [add environment variables](https://github.com/colynb/serverless-dotenv-plugin#readme) specific to your staging / production environments.
+
+**Note**: The dotenv plugin will inject *all* environment variables into your Lambda functions by default. This means that you don't need to explicitly define your API keys as environment variables for every function. To override this behavior, you can [define a whitelist](https://github.com/colynb/serverless-dotenv-plugin#plugin-options).
 
 ## Deploy
 
