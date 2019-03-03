@@ -5,6 +5,7 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 plugins:
   - serverless-dotenv-plugin
   - serverless-offline
+  - serverless-plugin-tracing
   - serverless-python-requirements
 
 provider:
@@ -15,7 +16,14 @@ provider:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   custom:
     DATADOG_LAMBDA_LAYER: arn:aws:lambda:${self:provider.region, 'us-east-1'}:464622532012:layer:Datadog-Python37-metric:1
+  tracing: true # enable tracing with X-Ray
   iamRoleStatements:
+    - Effect: "Allow" # X-Ray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -27,7 +35,7 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
-  create:
+  create: # inherits tracing settings from "provider"
     handler: todos/create.create
     events:
       - http:

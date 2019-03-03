@@ -1,4 +1,4 @@
-# Serverless REST API
+# Datadog + Serverless Example Project
 
 *This example is adapted from [Serverless](https://github.com/serverless/examples)*
 
@@ -28,12 +28,60 @@ You can also [add environment variables](https://github.com/colynb/serverless-do
 
 **Note**: The dotenv plugin will inject *all* environment variables into your Lambda functions by default. This means that you don't need to explicitly define your API keys as environment variables for every function. To override this behavior, you can [define a whitelist](https://github.com/colynb/serverless-dotenv-plugin#plugin-options).
 
+### Datadog Lambda Layer
+
+Currently, the Serverless Framework [requires](https://github.com/serverless/serverless/issues/5582) that you define Lambda Layers on a per-function basis, like this:
+
+```yaml
+```
+
+For saner defaults, we've included a [plugin](https://www.npmjs.com/package/serverless-plugin-common-layers) that makes Layers available to *all* functions in a provider by default:
+
+```yaml
+provider:
+  name: aws
+  runtime: python3.6
+  region: us-east-1
+  layers:
+    - arn:aws:lambda:${self:provider.region, 'us-east-1'}:464622532012:layer:Datadog-Python36-metric:1
+```
+
+### X-Ray tracing
+
+To make configuration even easier, this template project uses serverless-plugin-tracing to enable X-Ray tracing by default for all of your Lambda functions. In the AWS Console, this is the "Enable active tracing" option under Advanced Settings when viewing a Lambda function.
+
+To disable this per-function:
+
+```yaml
+functions:
+  mainFunction: # inherits tracing settings from "provider"
+    handler: src/app/index.handler
+  aBoringFunction:
+    tracing: false # overrides provider settings (opt out)
+```
+
+Also remember to install and import AWS' X-Ray client libraries for full tracing:
+
+**Python**
+
+```python
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import patch_all
+```
+
+**Node**
+
+```node
+const awsXRay = require('aws-xray-sdk');
+const awsSdk = awsXRay.captureAWS(require('aws-sdk'));
+```
+
 ## Deploy
 
 In order to deploy the endpoint simply run
 
 ```bash
-serverless deploy
+serverless deploy  # or sls deploy
 ```
 
 The expected result should be similar to:
