@@ -189,3 +189,9 @@ This is can be done via settings in the `serverless.yml`.
 ```
 
 In case you expect a lot of traffic fluctuation we recommend to checkout this guide on how to auto scale DynamoDB [https://aws.amazon.com/blogs/aws/auto-scale-dynamodb-with-dynamic-dynamodb/](https://aws.amazon.com/blogs/aws/auto-scale-dynamodb-with-dynamic-dynamodb/)
+
+## Misc
+
+From [StackOverflow](https://stackoverflow.com/a/3452888), update the Python dependencies with:
+
+`pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U`
