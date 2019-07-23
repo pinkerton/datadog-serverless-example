@@ -95,5 +95,7 @@ resources:
 custom:
   # Disable compiling non-pure Python modules since it requires Docker
   # https://github.com/UnitedIncome/serverless-python-requirements#cross-compiling
+  # https://github.com/UnitedIncome/serverless-python-requirements/pull/312
   pythonRequirements:
     dockerizePip: false
+    noDeploy: []
