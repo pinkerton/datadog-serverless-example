@@ -14,7 +14,7 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   custom:
-    DATADOG_LAMBDA_LAYER: arn:aws:lambda:${self:provider.region, 'us-east-1'}:464622532012:layer:Datadog-Python37:3
+    DATADOG_LAMBDA_LAYER: arn:aws:lambda:${self:provider.region, 'us-east-1'}:464622532012:layer:Datadog-Python37:35
   tracing: 
     lambda: true # https://serverless.com/framework/docs/providers/aws/guide/functions/#aws-x-ray-tracing
     apiGateway: true # https://serverless.com/blog/framework-release-v141/
